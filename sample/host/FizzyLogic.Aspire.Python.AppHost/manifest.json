@@ -1,0 +1,9 @@
+{
+  "resources": {
+    "batch": {
+      "type": "dockerfile.v0",
+      "path": "../../apps/batch/Dockerfile",
+      "context": "../../apps/batch"
+    }
+  }
+}

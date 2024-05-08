@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "orchestration", "orchestration", "{405A8A3C-99E4-45E4-820B-2218BBE74B44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E528FD2B-4ECF-47BD-BE58-860129BD1E0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FizzyLogic.Aspire.Python.Hosting", "orchestration\src\FizzyLogic.Aspire.Python.Hosting\FizzyLogic.Aspire.Python.Hosting.csproj", "{0D9F896C-9A2A-4F5B-9A6F-4B6AFFFD921C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{108B3198-F3AC-4A03-AB40-EB788BCC5671}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FizzyLogic.Aspire.Python.Hosting.Tests", "orchestration\test\FizzyLogic.Aspire.Python.Hosting.Tests\FizzyLogic.Aspire.Python.Hosting.Tests.csproj", "{01B48184-B2AE-46C2-9060-496098577216}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{7B0B7970-687F-48AB-9064-FDC32539FBA5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "host", "host", "{0A77B0BE-C3C0-40E1-85EF-BFA02D5D9545}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FizzyLogic.Aspire.Python.AppHost", "sample\host\FizzyLogic.Aspire.Python.AppHost\FizzyLogic.Aspire.Python.AppHost.csproj", "{F6F0048E-A709-4D55-B394-4563EA6DAB4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D9F896C-9A2A-4F5B-9A6F-4B6AFFFD921C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D9F896C-9A2A-4F5B-9A6F-4B6AFFFD921C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D9F896C-9A2A-4F5B-9A6F-4B6AFFFD921C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D9F896C-9A2A-4F5B-9A6F-4B6AFFFD921C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01B48184-B2AE-46C2-9060-496098577216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01B48184-B2AE-46C2-9060-496098577216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01B48184-B2AE-46C2-9060-496098577216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01B48184-B2AE-46C2-9060-496098577216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6F0048E-A709-4D55-B394-4563EA6DAB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6F0048E-A709-4D55-B394-4563EA6DAB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6F0048E-A709-4D55-B394-4563EA6DAB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6F0048E-A709-4D55-B394-4563EA6DAB4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E528FD2B-4ECF-47BD-BE58-860129BD1E0F} = {405A8A3C-99E4-45E4-820B-2218BBE74B44}
+		{0D9F896C-9A2A-4F5B-9A6F-4B6AFFFD921C} = {E528FD2B-4ECF-47BD-BE58-860129BD1E0F}
+		{108B3198-F3AC-4A03-AB40-EB788BCC5671} = {405A8A3C-99E4-45E4-820B-2218BBE74B44}
+		{01B48184-B2AE-46C2-9060-496098577216} = {108B3198-F3AC-4A03-AB40-EB788BCC5671}
+		{0A77B0BE-C3C0-40E1-85EF-BFA02D5D9545} = {7B0B7970-687F-48AB-9064-FDC32539FBA5}
+		{F6F0048E-A709-4D55-B394-4563EA6DAB4D} = {0A77B0BE-C3C0-40E1-85EF-BFA02D5D9545}
+	EndGlobalSection
+EndGlobal
