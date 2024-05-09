@@ -79,3 +79,33 @@ environment:
 - [opentelemetry-distro](https://pypi.org/project/opentelemetry-distro/)
   (Make sure you install opentelemetry-distro\[otlp\])
 - [opentelemetry-instrumentation-flask](https://pypi.org/project/opentelemetry-instrumentation-flask/)
+
+## Developing
+
+### Setting up your environment
+
+Before you can work on the code, make sure you have [.NET 8](https://dot.net), [Python](https://python.org), and [Rye](https://rye-up.com) configured.
+After install .NET 8, run the following commands to get the correct workload setup:
+
+```bash
+dotnet workload update
+dotnet workload install aspire
+```
+
+### Running the sample in the repository
+
+The repository contains a sample application which demonstrates various scenarios that are supported by this extension.
+Before running the sample, make sure you've synced the environments:
+
+```bash
+pushd sample/apps/batch && rye sync && popd
+pushd sample/apps/flask-service && rye sync && popd
+```
+
+Syncing the environments for the various components shouldn't take too long to complete. After completing the sync
+step, you can run the host like so:
+
+```
+cd sample/host/FizzyLogic.Aspire.Python.AppHost
+dotnet run
+```
