@@ -17,15 +17,18 @@ public static class PythonProjectResourceBuilderExtensions
     /// <param name="entrypoint">Script to run when the project is started</param>
     /// <param name="args">Extra command line arguments for the project</param>
     /// <returns>Returns the resource builder</returns>
-    public static IResourceBuilder<PythonProjectResource> AddPythonProjectWithVirtualEnvironment(this IDistributedApplicationBuilder builder, string name, string projectDirectory, string entrypoint = "main.py", params string[]? args)
+    public static IResourceBuilder<PythonProjectResource> AddPythonProjectWithVirtualEnvironment(
+        this IDistributedApplicationBuilder builder, string name, string projectDirectory,
+        string entrypoint = "main.py", params string[]? args)
     {
         var rootDirectory = builder.AppHostDirectory;
         var absoluteProjectDirectory = Path.GetFullPath(Path.Join(rootDirectory, projectDirectory));
-        
+
         PythonProjectResource projectResource;
 
-        var instrumentationExecutable = Path.Join(absoluteProjectDirectory, ".venv", "bin", "opentelemetry-instrument");
-        var pythonExecutable = Path.Join(absoluteProjectDirectory, ".venv", "bin", "python");
+        var instrumentationExecutable = DiscoverOpenTelemetryInstrumentationExecutable(absoluteProjectDirectory);
+        var pythonExecutable = DiscoverPythonExecutable(absoluteProjectDirectory);
+
         bool usesInstrumentation = false;
 
         if (File.Exists(instrumentationExecutable))
@@ -45,10 +48,10 @@ public static class PythonProjectResourceBuilderExtensions
                 // // Export the logs to the OTLP endpoint only. We already have logging.
                 context.Args.Add("--traces_exporter");
                 context.Args.Add("otlp");
-                
+
                 context.Args.Add("--logs_exporter");
                 context.Args.Add("console,otlp");
-                
+
                 context.Args.Add("--metrics_exporter");
                 context.Args.Add("otlp");
 
@@ -72,7 +75,7 @@ public static class PythonProjectResourceBuilderExtensions
         if (usesInstrumentation)
         {
             resourceBuilder.WithOtlpExporter();
-            
+
             // Make sure to attach the logging instrumentation setting so we can capture logs.
             // Without this you'll need to configure logging yourself. Which is kind of a pain.
             resourceBuilder.WithEnvironment("OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED", "true");
@@ -88,7 +91,8 @@ public static class PythonProjectResourceBuilderExtensions
     /// </summary>
     /// <param name="context"></param>
     /// <param name="resource"></param>
-    private static async Task WriteProjectAsDockerFile(ManifestPublishingContext context, PythonProjectResource resource)
+    private static async Task WriteProjectAsDockerFile(ManifestPublishingContext context,
+        PythonProjectResource resource)
     {
         var dockerFilePath = Path.Combine(resource.WorkingDirectory, "Dockerfile");
         var manifestRelativeDockerFilePath = context.GetManifestRelativePath(dockerFilePath);
@@ -96,7 +100,8 @@ public static class PythonProjectResourceBuilderExtensions
 
         if (!File.Exists(dockerFilePath))
         {
-            throw new InvalidOperationException("Dockerfile not found in project directory. Please provide a Dockerfile in the project directory.");
+            throw new InvalidOperationException(
+                "Dockerfile not found in project directory. Please provide a Dockerfile in the project directory.");
         }
 
         context.Writer.WriteString("type", "dockerfile.v0");
@@ -106,32 +111,6 @@ public static class PythonProjectResourceBuilderExtensions
         await context.WriteEnvironmentVariablesAsync(resource).ConfigureAwait(false);
 
         context.WriteBindings(resource);
-    }
-
-    private static string DiscoverPythonExecutable(string workingDirectory)
-    {
-        // Check for the well-known .venv folder inside the working directory.
-        // If it exists, we can assume that the python executable is located in the .venv folder.
-        if (Directory.Exists(Path.Join(workingDirectory, ".venv")))
-        {
-            var virtualEnvironmentPath = Path.Join(workingDirectory, ".venv");
-            var windowsPythonExecutable = Path.Join(virtualEnvironmentPath, "bin", "python.exe");
-            var unixPythonExecutable = Path.Join(virtualEnvironmentPath, "bin", "python");
-
-            // One of these entries should return a value. If not, we're dealing with a non-standard setup.
-            // The user should provide the python executable path manually.
-            if (File.Exists(unixPythonExecutable))
-            {
-                return unixPythonExecutable;
-            }
-
-            if (File.Exists(windowsPythonExecutable))
-            {
-                return windowsPythonExecutable;
-            }
-        }
-
-        return "python";
     }
 
     /// <summary>
@@ -161,5 +140,35 @@ public static class PythonProjectResourceBuilderExtensions
                 yield return file;
             }
         }
+    }
+
+    /// <summary>
+    /// Finds the right python executable based on the operating system.
+    /// </summary>
+    /// <param name="workingDirectory">The project directory where the virtual environment is located.</param>
+    /// <returns>The full path to the python executable.</returns>
+    private static string DiscoverPythonExecutable(string workingDirectory)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return Path.Join(workingDirectory, ".venv", "Scripts", "python.exe");
+        }
+
+        return Path.Join(workingDirectory, ".venv", "bin", "python");
+    }
+
+    /// <summary>
+    /// Finds the right opentelemetry-instrument executable based on the operating system.
+    /// </summary>
+    /// <param name="workingDirectory">The project directory where the virtual environment is located.</param>
+    /// <returns>The full path to the opentelemetry-instrument executable.</returns>
+    private static string DiscoverOpenTelemetryInstrumentationExecutable(string workingDirectory)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return Path.Join(workingDirectory, ".venv", "scripts", "opentelemetry-instrument.exe");
+        }
+
+        return Path.Join(workingDirectory, ".venv", "bin", "opentelemetry-instrument");
     }
 }
