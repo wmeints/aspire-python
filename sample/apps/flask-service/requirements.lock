@@ -15,8 +15,6 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via flask
-colorama==0.4.6
-    # via click
 deprecated==1.2.14
     # via opentelemetry-api
     # via opentelemetry-exporter-otlp-proto-grpc

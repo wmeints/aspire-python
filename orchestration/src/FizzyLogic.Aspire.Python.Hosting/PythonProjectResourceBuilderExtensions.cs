@@ -24,10 +24,11 @@ public static class PythonProjectResourceBuilderExtensions
         var absoluteProjectDirectory = Path.GetFullPath(Path.Join(builder.AppHostDirectory, projectDirectory));
         var virtualEnvironment = new VirtualEnvironment(absoluteProjectDirectory);
         var instrumentationExecutable = virtualEnvironment.GetExecutable("opentelemetry-instrument");
-        var pythonExecutable = virtualEnvironment.GetExecutable("python");
-        var projectExecutable = instrumentationExecutable ?? pythonExecutable!;
+        var pythonExecutable = virtualEnvironment.GetRequiredExecutable("python");
+        var projectExecutable = instrumentationExecutable ?? pythonExecutable;
+
         var projectResource = new PythonProjectResource(name, projectExecutable, absoluteProjectDirectory);
-        
+
         var resourceBuilder = builder.AddResource(projectResource).WithArgs(context =>
         {
             if (!string.IsNullOrEmpty(instrumentationExecutable))

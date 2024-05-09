@@ -18,7 +18,7 @@ public static class FlaskProjectResourceBuilderExtensions
         var absoluteProjectDirectory = Path.GetFullPath(Path.Join(builder.AppHostDirectory, projectDirectory));
         var virtualEnvironment = new VirtualEnvironment(absoluteProjectDirectory);
         var instrumentationExecutable = virtualEnvironment.GetExecutable("opentelemetry-instrument");
-        var flaskExecutable = virtualEnvironment.GetExecutable("flask");
+        var flaskExecutable = virtualEnvironment.GetRequiredExecutable("flask");
         var projectExecutable = instrumentationExecutable ?? flaskExecutable!;
         var projectResource = new FlaskProjectResource(name, projectExecutable, absoluteProjectDirectory);
 
@@ -35,7 +35,7 @@ public static class FlaskProjectResourceBuilderExtensions
 
                 context.Args.Add("--metrics_exporter");
                 context.Args.Add("otlp");
-                
+
                 context.Args.Add(flaskExecutable!);
             }
 
@@ -44,11 +44,11 @@ public static class FlaskProjectResourceBuilderExtensions
             context.Args.Add(Path.GetFileNameWithoutExtension(entrypoint));
             context.Args.Add("run");
         });
-        
+
         // Automatically add the HTTP endpoint for the Flask project (which in this case is always on port 5000)
         // Expose the port on the FLASK_RUN_PORT to allow the Flask app to bind to the correct port.
         resourceBuilder.WithHttpEndpoint(targetPort: 5000, name: "http", env: "FLASK_RUN_PORT");
-        
+
         // Make sure to wire up the OTLP exporter automatically when we're using opentelemetry instrumentation.
         if (!string.IsNullOrEmpty(instrumentationExecutable))
         {
