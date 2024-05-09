@@ -5,31 +5,34 @@ name: Continuous integration
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Publish package
-      run: dotnet pack --project orchestration/src/FizzyLogic.Aspire.Python.Hosting/FizzyLogic.Aspire.Python.Hosting.csproj -o ./dist/
-    - uses: actions/upload-artifact@v4
-      name: Upload artifact
-      with:
-        name: package
-        path: dist/*
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Install aspire workloads
+        run: |
+          dotnet workload update
+          dotnet workload install aspire
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+      - name: Publish package
+        run: dotnet pack --project orchestration/src/FizzyLogic.Aspire.Python.Hosting/FizzyLogic.Aspire.Python.Hosting.csproj -o ./dist/
+      - uses: actions/upload-artifact@v4
+        name: Upload artifact
+        with:
+          name: package
+          path: dist/*
