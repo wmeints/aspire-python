@@ -1,0 +1,19 @@
+[project]
+name = "flask-service"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Willem Meints", email = "1550763+wmeints@users.noreply.github.com" }
+]
+dependencies = [
+    "flask>=3.0.3",
+    "opentelemetry-distro[otlp]>=0.45b0",
+    "opentelemetry-instrumentation-flask>=0.45b0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[tool.rye]
+managed = true
+virtual = true
+dev-dependencies = []
