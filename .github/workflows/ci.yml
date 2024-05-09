@@ -30,7 +30,7 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
       - name: Publish package
-        run: dotnet pack --project orchestration/src/FizzyLogic.Aspire.Python.Hosting/FizzyLogic.Aspire.Python.Hosting.csproj -o ./dist/
+        run: dotnet pack orchestration/src/FizzyLogic.Aspire.Python.Hosting/FizzyLogic.Aspire.Python.Hosting.csproj -o ./dist/
       - uses: actions/upload-artifact@v4
         name: Upload artifact
         with:
