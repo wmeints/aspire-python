@@ -24,26 +24,16 @@ public static class PythonProjectResourceBuilderExtensions
         var rootDirectory = builder.AppHostDirectory;
         var absoluteProjectDirectory = Path.GetFullPath(Path.Join(rootDirectory, projectDirectory));
 
-        PythonProjectResource projectResource;
+        VirtualEnvironment virtualEnvironment = new(absoluteProjectDirectory);
 
-        var instrumentationExecutable = DiscoverOpenTelemetryInstrumentationExecutable(absoluteProjectDirectory);
-        var pythonExecutable = DiscoverPythonExecutable(absoluteProjectDirectory);
-
-        bool usesInstrumentation = false;
-
-        if (File.Exists(instrumentationExecutable))
-        {
-            usesInstrumentation = true;
-            projectResource = new PythonProjectResource(name, instrumentationExecutable, absoluteProjectDirectory);
-        }
-        else
-        {
-            projectResource = new PythonProjectResource(name, pythonExecutable, absoluteProjectDirectory);
-        }
-
+        var instrumentationExecutable = virtualEnvironment.GetExecutable("opentelemetry-instrument");
+        var pythonExecutable = virtualEnvironment.GetExecutable("python");
+        var projectExecutable = instrumentationExecutable ?? pythonExecutable!;
+        var projectResource = new PythonProjectResource(name, projectExecutable, absoluteProjectDirectory);
+        
         var resourceBuilder = builder.AddResource(projectResource).WithArgs(context =>
         {
-            if (usesInstrumentation)
+            if (!string.IsNullOrEmpty(instrumentationExecutable))
             {
                 // // Export the logs to the OTLP endpoint only. We already have logging.
                 context.Args.Add("--traces_exporter");
@@ -55,7 +45,7 @@ public static class PythonProjectResourceBuilderExtensions
                 context.Args.Add("--metrics_exporter");
                 context.Args.Add("otlp");
 
-                context.Args.Add(pythonExecutable);
+                context.Args.Add(pythonExecutable!);
             }
 
             // Always include the entrypoint script as the first argument
@@ -72,7 +62,7 @@ public static class PythonProjectResourceBuilderExtensions
         });
 
         // Make sure to wire up the OTLP exporter automatically when we're using opentelemetry instrumentation.
-        if (usesInstrumentation)
+        if (!string.IsNullOrEmpty(instrumentationExecutable))
         {
             resourceBuilder.WithOtlpExporter();
 
@@ -111,35 +101,6 @@ public static class PythonProjectResourceBuilderExtensions
         await context.WriteEnvironmentVariablesAsync(resource).ConfigureAwait(false);
 
         context.WriteBindings(resource);
-    }
-
-    /// <summary>
-    /// Detect whether the project contains a requirements file
-    /// </summary>
-    /// <param name="projectRootDir"></param>
-    /// <returns></returns>
-    private static IEnumerable<string> GetRequirementsFiles(string projectRootDir)
-    {
-        var projectFiles = Directory.GetFiles(projectRootDir);
-
-        // List of candidate files that may contain dependencies
-        // This list is derived from common python project conventions
-        string[] candidateFiles =
-        [
-            "requirements.txt",
-            "requirements.lock",
-            "dev-requirements.txt",
-            "test-requirements.txt",
-            "dev-requirements.lock"
-        ];
-
-        foreach (var file in candidateFiles)
-        {
-            if (projectFiles.Contains(file))
-            {
-                yield return file;
-            }
-        }
     }
 
     /// <summary>
