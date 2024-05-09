@@ -1,12 +1,16 @@
 # Aspire hosting extensions for Python projects
 
+[![Continuous integration](https://github.com/wmeints/aspire-python/actions/workflows/ci.yml/badge.svg)](https://github.com/wmeints/aspire-python/actions/workflows/ci.yml)
+![NuGet Version](https://img.shields.io/nuget/v/FizzyLogic.Aspire.Python.Hosting)
+
 .NET Aspire already has great support for orchestrating C# projects and a fast array of middleware components.
-This project adds additional support for running Python projects as smooth as C# projects.
+This project adds additional support for running Python projects as smoothly as C# projects.
 
 ## System requirements
 
 - Python
 - .NET SDK 8 or higher
+- .NET Aspire workload preview 7
 
 ## Getting started
 
