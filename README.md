@@ -19,16 +19,19 @@ There's [an excellent guide](https://learn.microsoft.com/en-us/dotnet/aspire/get
 
 Once you've set up a basic Aspire project, follow the instructions below to get started.
 
-### Important assumptions
+### Before you start building
 
 These extensions make a few assumptions about your project:
 
-- You have a virtual environment in the `.venv` directory in your Python project.
-- You have a Dockerfile in the root directory of your Python project.
+- You have a virtual environment in the `.venv` directory in your Python project. You can set up a virtual environment with
+  [venv](https://docs.python.org/3/library/venv.html), [rye](https://rye-up.com) or [poetry](https://python-poetry.org/).
+- You have a Dockerfile in the root directory of your Python project. A sample Dockerfile can be found [here](sample/apps/batch/Dockerfile)
 
 **Note:** I haven't added support for Anaconda because I don't use it myself. Feel free to open a PR to add support for Anaconda.
 
-### Setting up orchestration for a Python project
+### Setting up a Python project
+
+Basic Python projects can be configured using the following code:
 
 ```csharp
 using FizzyLogic.Aspire.Python.Hosting;
@@ -40,28 +43,39 @@ builder.AddPythonProjectWithVirtualEnvironment("batch", "apps/batch");
 builder.Build().Run();
 ```
 
-The line `builder.AddProjectWithVirtualEnvironment` adds a new component to the orchestrator with the name `batch` located in `apps/batch`.
+By adding a Python project resource, you'll automatically get tracing, logging, and metrics configured.
+Note that you need to add extra HTTP and HTTPS endpoints yourself by calling `.WithHttpEndpoint` or `WithHttpsEndpoint`.
 
-## Documentation
+The Python project is deployed as a container when you publish the Aspire application. You'll need a Dockerfile in the
+Python project directory for the publication to work properly.
 
-### Support for tracing, metrics, and logging
+Telemetry data is automatically gathered when you have the following package available in your virtual
+environment:
 
-The extension automatically detects that you have the `opentelemetry-distro` package available in your project's virtual environment.
-When you have the opentelemetry distro package your application is automatically instrumented. The traces, logs, and metrics in your
-app are collected in the dashboard.
+- [opentelemetry-distro](https://pypi.org/project/opentelemetry-distro/)
+  (Make sure you install opentelemetry-distro\[otlp\])
 
-Depending on what you're building you'll likely need a few instrumentation libraries. There are [a bunch available on pypi](https://pypi.org/search/?q=opentelemetry-instrumentation).
+### Setting up a Flask project
 
-The most commonly used are:
+Flask applications differ from regular Python projects in that we'll automatically expose an HTTP endpoint for the project.
+You can configure a new Flask project using the following code:
 
-- [opentelemetry-instrumentation-logging](https://pypi.org/project/opentelemetry-instrumentation-logging/)
-- [opentelemetry-instrumentation-django](https://pypi.org/project/opentelemetry-instrumentation-django/)
-- [opentelemetry-instrumentation-fastapi](https://pypi.org/project/opentelemetry-instrumentation-fastapi/)
+```csharp
+using FizzyLogic.Aspire.Python.Hosting;
+
+var builder = DistributedApplication.CreateBuilder(args);
+
+builder.AddFlaskProjectWithVirtualEnvironment("batch", "apps/flask-service");
+
+builder.Build().Run();
+```
+
+As with regular Python projects, the Flask project is published as a container. You'll need a Dockerfile in the Python
+project directory for the publication to work properly.
+
+Telemetry data is automatically gathered when you have the following two packages available in your virtual
+environment:
+
+- [opentelemetry-distro](https://pypi.org/project/opentelemetry-distro/)
+  (Make sure you install opentelemetry-distro\[otlp\])
 - [opentelemetry-instrumentation-flask](https://pypi.org/project/opentelemetry-instrumentation-flask/)
-
-To use these libraries you can install them in your virtual environment, and the instrumentation logic will pick them up without any extra configuration.
-
-### Support for clients
-
-Since there are a lot of components in Aspire, it will take time to get support for them in Python.
-I will update this page as I start work on them.

@@ -8,7 +8,7 @@
   
   <PropertyGroup>
     <PackageId>FizzyLogic.Aspire.Python.Hosting</PackageId>
-    <Version>0.1.0-preview-1</Version>
+    <VersionPrefix>0.1.0</VersionPrefix>
     <Authors>Willem Meints</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

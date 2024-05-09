@@ -29,8 +29,10 @@ jobs:
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
+      - name: Generate package version
+        run: echo "VERSION_SUFFIX=preview-2.${{github.run_number}}" >> $GITHUB_ENV
       - name: Publish package
-        run: dotnet pack orchestration/src/FizzyLogic.Aspire.Python.Hosting/FizzyLogic.Aspire.Python.Hosting.csproj -o ./dist/
+        run: dotnet pack orchestration/src/FizzyLogic.Aspire.Python.Hosting/FizzyLogic.Aspire.Python.Hosting.csproj -o ./dist/ --version-suffix ${VERSION_SUFFIX}
       - uses: actions/upload-artifact@v4
         name: Upload artifact
         with:
