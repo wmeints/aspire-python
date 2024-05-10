@@ -2,7 +2,4 @@
 
 namespace FizzyLogic.Aspire.Python.Hosting;
 
-public class FlaskProjectResource(string name, string executablePath, string workingDirectory): PythonProjectResource(name, executablePath, workingDirectory), IResourceWithEndpoints
-{
-    
-}
+public class FlaskProjectResource(string name, string executablePath, string workingDirectory) : PythonProjectResource(name, executablePath, workingDirectory), IResourceWithEndpoints;

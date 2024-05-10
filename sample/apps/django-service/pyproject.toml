@@ -1,0 +1,18 @@
+[project]
+name = "django-service"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "willem.meints@gmail.com", email = "1550763+wmeints@users.noreply.github.com" }
+]
+dependencies = [
+    "django>=5.0.6",
+    "psycopg2-binary>=2.9.9",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[tool.rye]
+managed = true
+virtual = true
+dev-dependencies = []
