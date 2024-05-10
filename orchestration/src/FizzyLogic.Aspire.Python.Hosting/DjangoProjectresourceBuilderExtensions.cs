@@ -12,7 +12,7 @@ public static class DjangoProjectResourceBuilderExtensions
     /// <param name="name">Name of the django project</param>
     /// <param name="projectDirectory">The directory containing the django project</param>
     /// <returns>Returns the resource builder for further extension</returns>
-    public static IResourceBuilder<DjangoProjectResource> AddDjangoProjectWithVirtualEnvironment(this IDistributedApplicationBuilder builder, string name, string projectDirectory)
+    public static IResourceBuilder<DjangoProjectResource> AddDjangoProjectWithVirtualEnvironment(this IDistributedApplicationBuilder builder, string name, string projectDirectory, int httpPort = 8000)
     {
         var absoluteProjectDirectory = Path.GetFullPath(Path.Join(builder.AppHostDirectory, projectDirectory));
         var virtualEnvironment = new VirtualEnvironment(absoluteProjectDirectory);
@@ -42,13 +42,17 @@ public static class DjangoProjectResourceBuilderExtensions
             context.Args.Add("manage.py");
             context.Args.Add("runserver");
 
-            context.Args.Add(projectResource.GetEndpoint("http").TargetPort.ToString()!);
+            var serverPort = projectResource.GetEndpoint("http").Port.ToString()!;
+
+            // Bind Django to the target port of the HTTP endpoint
+            // Also, make sure we bind to the 0.0.0.0 address to allow external connections.
+            context.Args.Add(serverPort);
         });
 
         // Automatically add the HTTP endpoint for the Django project (which in this case is always on port 8000)
         // Expose the port on the HTTP_PORT to allow the Django app to bind to the correct port.
         // Do not proxy the endpoint as Django doesn't seem to like that.
-        resourceBuilder.WithHttpEndpoint(targetPort: 8000, name: "http", env: "HTTP_PORT", isProxied: true);
+        resourceBuilder.WithHttpEndpoint(port: 8000, name: "http", env: "PORT", isProxied: false);
 
         // Make sure to wire up the OTLP exporter automatically when we're using opentelemetry instrumentation.
         if (!string.IsNullOrEmpty(instrumentationExecutable))
