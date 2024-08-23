@@ -3,7 +3,13 @@
 [![Continuous integration](https://github.com/wmeints/aspire-python/actions/workflows/ci.yml/badge.svg)](https://github.com/wmeints/aspire-python/actions/workflows/ci.yml)
 [![NuGet Version](https://img.shields.io/nuget/v/FizzyLogic.Aspire.Python.Hosting)](https://www.nuget.org/packages/FizzyLogic.Aspire.Python.Hosting/)
 
-.NET Aspire already has great support for orchestrating C# projects and a fast array of middleware components.
+---------------------------------
+
+**IMPORTANT** I merged most of the code here into the .NET Aspire code base. If you want to use Python projects with Aspire, make sure to check out the docs here: 
+https://learn.microsoft.com/en-us/dotnet/aspire/get-started/build-aspire-apps-with-python?tabs=bash
+
+---------------------------------
+
 This project adds additional support for running Python projects as smoothly as C# projects.
 
 ## System requirements
